@@ -498,6 +498,54 @@
     color:var(--accent-2);
     text-align:center;
   }
+
+  .streamer-wrap{
+    overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    padding:10px 0 6px;
+  }
+  .streamer-track{
+    display:flex;
+    align-items:flex-start;
+    gap:36px;
+    width:max-content;
+    animation:streamer-scroll 32s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .streamer-track{ animation:none; } }
+  @keyframes streamer-scroll{
+    0%{ transform:translateX(0); }
+    100%{ transform:translateX(-50%); }
+  }
+  .streamer-item{
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    width:88px; flex-shrink:0;
+  }
+  .streamer-avatar{
+    width:72px; height:72px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:20px;
+    letter-spacing:0.5px;
+    color:#0a0a0b;
+    border:2px solid var(--line);
+  }
+  .streamer-name{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px; letter-spacing:0.5px;
+    color:var(--text-dim);
+    text-align:center;
+    text-transform:uppercase;
+    line-height:1.3;
+  }
+  .streamer-note{
+    margin-top:18px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    font-style:italic;
+  }
   .media-poster{
     position:absolute; inset:0;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -697,6 +745,15 @@
     </div>
   </section>
 
+  <section id="streamers" class="marker-section" data-marker="STREAMERS">
+    <div class="clip-label"><span data-i18n="streamersLabel">STREAMERS // PARCERIAS</span><span data-i18n="streamersPlaceholderTag">RESERVADO</span></div>
+    <h2 class="section-title" data-i18n="streamersTitle">Canais que já passaram pela timeline.</h2>
+    <div class="streamer-wrap">
+      <div class="streamer-track" id="streamerTrack"></div>
+    </div>
+    <p class="streamer-note" data-i18n="streamerNote">(Espaço reservado — troque pelos canais, fotos e nomes reais quando me enviar)</p>
+  </section>
+
   <section id="portfolio" class="marker-section" data-marker="PORTFOLIO">
     <div class="clip-label"><span data-i18n="clipLabel3">CLIP_03 // PORTFÓLIO</span><span>00:00:24:00</span></div>
     <h2 class="section-title" data-i18n="portfolioTitle">Bins de trabalho.</h2>
@@ -739,14 +796,13 @@
       <div class="media-showcase">
       <div class="media-item">
         <div class="media-label"><span data-i18n="mediaLabelIg">Instagram — @and4gi</span><span class="media-tag" data-i18n="mediaTagVertical">Vertical</span></div>
-        <div class="media-frame vertical-frame" id="ig-embed-wrap" style="background:#101012;">
-          <div class="media-poster" data-kind="instagram" data-permalink="https://www.instagram.com/and4gi/reel/DY5Q0d7tqNv/">
+        <div class="media-frame vertical-frame" id="ig-embed-wrap" style="background:linear-gradient(160deg,#2b1338,#120a1a);">
+          <a class="media-poster" href="https://www.instagram.com/and4gi/reel/DY5Q0d7tqNv/" target="_blank" rel="noopener" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; cursor:pointer; text-decoration:none;">
             <div class="poster-icon">▶</div>
             <div class="poster-text">
               <span data-i18n="posterWatchIg">Assistir no Instagram</span>
             </div>
-          </div>
-          <noscript><a class="media-fallback" href="https://www.instagram.com/and4gi/reel/DY5Q0d7tqNv/" target="_blank" rel="noopener">▷ Abrir reel no Instagram</a></noscript>
+          </a>
         </div>
       </div>
       <div class="media-item">
@@ -885,6 +941,10 @@
       chip2: "Social media cuts",
       chip3: "Simple motion",
       chip4: "Gameplay editing",
+      streamersLabel: "STREAMERS // PARTNERS",
+      streamersPlaceholderTag: "PHOTOS PENDING",
+      streamersTitle: "Channels that have run through the timeline.",
+      streamerNote: "(Real channels — waiting on photos/logos to swap in)",
       clipLabel3: "CLIP_03 // PORTFOLIO",
       portfolioTitle: "Work bins.",
       card1Title: "Motion Graphics",
@@ -948,6 +1008,10 @@
       chip2: "Cortes para redes sociais",
       chip3: "Motion simples",
       chip4: "Edição de gameplay",
+      streamersLabel: "STREAMERS // PARCERIAS",
+      streamersPlaceholderTag: "FOTOS PENDENTES",
+      streamersTitle: "Canais que já passaram pela timeline.",
+      streamerNote: "(Canais reais — faltam só as fotos/logos pra trocar)",
       clipLabel3: "CLIP_03 // PORTFÓLIO",
       portfolioTitle: "Bins de trabalho.",
       card1Title: "Motion Graphics",
@@ -1006,41 +1070,46 @@
   applyLang('en');
 
   // ---- Click-to-load video players (more resilient than auto-embedding) ----
-  document.querySelectorAll('.media-poster').forEach(function(poster){
+  document.querySelectorAll('.media-poster[data-kind="youtube"]').forEach(function(poster){
     poster.addEventListener('click', function(){
-      const kind = poster.dataset.kind;
+      const videoId = poster.dataset.videoid;
       const frame = poster.closest('.media-frame');
-      if (kind === 'youtube'){
-        const videoId = poster.dataset.videoid;
-        const iframe = document.createElement('iframe');
-        iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?rel=0&autoplay=1';
-        iframe.title = 'Vídeo de Samuel Adil no YouTube';
-        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-        iframe.setAttribute('allowfullscreen', '');
-        iframe.setAttribute('frameborder', '0');
-        iframe.style.position = 'absolute';
-        iframe.style.inset = '0';
-        iframe.style.width = '100%';
-        iframe.style.height = '100%';
-        iframe.style.border = '0';
-        frame.replaceChild(iframe, poster);
-      } else if (kind === 'instagram'){
-        const permalink = poster.dataset.permalink;
-        const bq = document.createElement('blockquote');
-        bq.className = 'instagram-media';
-        bq.setAttribute('data-instgrm-permalink', permalink);
-        bq.setAttribute('data-instgrm-version', '14');
-        bq.style.width = '100%';
-        bq.style.margin = '0';
-        bq.style.border = '0';
-        frame.replaceChild(bq, poster);
-        const s = document.createElement('script');
-        s.async = true;
-        s.src = '//www.instagram.com/embed.js';
-        document.body.appendChild(s);
-      }
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?rel=0&autoplay=1';
+      iframe.title = 'Vídeo de Samuel Adil no YouTube';
+      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('frameborder', '0');
+      iframe.style.position = 'absolute';
+      iframe.style.inset = '0';
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = '0';
+      frame.replaceChild(iframe, poster);
     });
   });
+
+  // ---- Streamer/channel strip (placeholder content — swap for real names/photos/logos) ----
+  (function(){
+    const items = [
+      { initials: "SS", label: "SouzaSoul", color: "var(--accent-2)" },
+      { initials: "AZ", label: "Alanzoka", color: "var(--gold)" },
+      { initials: "DBD", label: "Dead by Daylight", color: "var(--accent)" },
+      { initials: "NF", label: "NuhFPS", color: "var(--blue)" },
+      { initials: "VAL", label: "Valorant", color: "var(--accent-2)" },
+      { initials: "FK", label: "Forsaken", color: "var(--gold)" },
+      { initials: "GZ", label: "Guzu", color: "var(--accent)" },
+      { initials: "VLOG", label: "Vlogs", color: "var(--blue)" },
+      { initials: "LH", label: "LinaHall", color: "var(--accent-2)" },
+    ];
+    const track = document.getElementById('streamerTrack');
+    if (track){
+      const html = items.map(function(it){
+        return '<div class="streamer-item"><div class="streamer-avatar" style="background:' + it.color + '">' + it.initials + '</div><span class="streamer-name">' + it.label + '</span></div>';
+      }).join('');
+      track.innerHTML = html + html;
+    }
+  })();
 </script>
 
 </body>

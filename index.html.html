@@ -1,4 +1,4 @@
-,<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
@@ -546,6 +546,91 @@
     color:var(--text-dim);
     font-style:italic;
   }
+
+  #startProjectBtn{ font-family:'IBM Plex Mono',monospace; }
+
+  #contact-modal-overlay{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(6,5,8,0.72);
+    backdrop-filter:blur(3px);
+    z-index:200;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  #contact-modal-overlay.open{ display:flex; }
+  #contact-modal{
+    width:100%;
+    max-width:420px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  }
+  .cm-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 20px;
+    border-bottom:1px solid var(--line);
+    font-family:'Bebas Neue',sans-serif;
+    font-size:20px;
+    letter-spacing:0.5px;
+  }
+  .cm-head button{
+    background:transparent; border:none; color:var(--text-dim);
+    font-size:16px; cursor:pointer; line-height:1;
+    padding:4px;
+  }
+  .cm-head button:hover{ color:var(--accent); }
+  .cm-tabs{
+    display:flex;
+    border-bottom:1px solid var(--line);
+  }
+  .cm-tab{
+    flex:1;
+    background:transparent;
+    border:none;
+    border-bottom:2px solid transparent;
+    color:var(--text-dim);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px; letter-spacing:1px;
+    text-transform:uppercase;
+    padding:14px 10px;
+    cursor:pointer;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .cm-tab:hover{ color:var(--text); }
+  .cm-tab.active{ color:var(--accent-2); border-bottom-color:var(--accent-2); }
+  .cm-panel{ padding:22px 20px 24px; }
+  .cm-desc{
+    font-size:14px; color:var(--text-dim); line-height:1.6; margin-bottom:16px;
+  }
+  .cm-email-row{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px;
+    border:1px solid var(--line);
+    padding:12px 14px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+  }
+  .cm-label{
+    display:block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:1px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    margin:14px 0 6px;
+  }
+  .cm-input{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    padding:10px 12px;
+  }
+  .cm-input:focus{ outline:none; border-color:var(--accent-2); }
+  .cm-textarea{ resize:vertical; }
   .media-poster{
     position:absolute; inset:0;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -842,10 +927,39 @@
         <span class="go" style="opacity:.5; cursor:default;">—</span>
       </div>
       <div class="export-footer">
-        <a href="contato.html" target="_blank" rel="noopener" class="btn solid" data-i18n="btnStartProject">Iniciar projeto ▷</a>
+        <button type="button" id="startProjectBtn" class="btn solid" data-i18n="btnStartProject">Iniciar projeto ▷</button>
       </div>
     </div>
   </section>
+
+  <div id="contact-modal-overlay">
+    <div id="contact-modal" role="dialog" aria-modal="true">
+      <div class="cm-head">
+        <span data-i18n="cmTitle">Novo projeto</span>
+        <button type="button" id="cm-close" aria-label="Close">✕</button>
+      </div>
+      <div class="cm-tabs">
+        <button type="button" class="cm-tab active" data-tab="email" data-i18n="cmTabEmail">E-mail</button>
+        <button type="button" class="cm-tab" data-tab="message" data-i18n="cmTabMessage">Mensagem</button>
+      </div>
+      <div class="cm-panel" id="cm-panel-email">
+        <p class="cm-desc" data-i18n="cmEmailDesc">Manda um e-mail direto — respondo o mais rápido possível.</p>
+        <div class="cm-email-row">
+          <span id="cm-email-value">samsdl06@gmail.com</span>
+          <button type="button" id="cm-copy-email" class="btn" data-i18n="cmCopy">Copiar</button>
+        </div>
+        <a href="mailto:samsdl06@gmail.com" class="btn solid" style="margin-top:14px; display:inline-flex;" data-i18n="cmOpenEmail">Abrir e-mail ▷</a>
+      </div>
+      <div class="cm-panel" id="cm-panel-message" style="display:none;">
+        <p class="cm-desc" data-i18n="cmMessageDesc">Prefere escrever por aqui? Preenche e eu recebo no e-mail.</p>
+        <label class="cm-label" data-i18n="cmNameLabel">Nome</label>
+        <input type="text" id="cm-name" class="cm-input" data-i18n-placeholder="cmNamePlaceholder" placeholder="Seu nome">
+        <label class="cm-label" data-i18n="cmMsgLabel">Mensagem</label>
+        <textarea id="cm-message" class="cm-input cm-textarea" rows="4" data-i18n-placeholder="cmMsgPlaceholder" placeholder="Conta um pouco do projeto..."></textarea>
+        <button type="button" id="cm-send-message" class="btn solid" style="margin-top:14px;" data-i18n="cmSend">Enviar ▷</button>
+      </div>
+    </div>
+  </div>
 
 
 </main>
@@ -980,6 +1094,18 @@
       btnStartProject: "Start a project ▷",
       footer1: "Samuel Adil — Video Editor",
       footer2: "Built in HTML, cut in Premiere.",
+      cmTitle: "New project",
+      cmTabEmail: "Email",
+      cmTabMessage: "Message",
+      cmEmailDesc: "Send me an email directly — I reply as fast as I can.",
+      cmCopy: "Copy",
+      cmOpenEmail: "Open email ▷",
+      cmMessageDesc: "Prefer to write here? Fill this in and it lands in my email.",
+      cmNameLabel: "Name",
+      cmNamePlaceholder: "Your name",
+      cmMsgLabel: "Message",
+      cmMsgPlaceholder: "Tell me a bit about the project...",
+      cmSend: "Send ▷",
     },
     pt: {
       heroRec: "Editor de vídeo — freelancer",
@@ -1047,6 +1173,18 @@
       btnStartProject: "Iniciar projeto ▷",
       footer1: "Samuel Adil — Editor de vídeo",
       footer2: "Montado em HTML, cortado no Premiere.",
+      cmTitle: "Novo projeto",
+      cmTabEmail: "E-mail",
+      cmTabMessage: "Mensagem",
+      cmEmailDesc: "Manda um e-mail direto — respondo o mais rápido possível.",
+      cmCopy: "Copiar",
+      cmOpenEmail: "Abrir e-mail ▷",
+      cmMessageDesc: "Prefere escrever por aqui? Preenche e eu recebo no e-mail.",
+      cmNameLabel: "Nome",
+      cmNamePlaceholder: "Seu nome",
+      cmMsgLabel: "Mensagem",
+      cmMsgPlaceholder: "Conta um pouco do projeto...",
+      cmSend: "Enviar ▷",
     }
   };
 
@@ -1055,6 +1193,10 @@
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       const key = el.dataset.i18n;
       if (dict[key] !== undefined) el.textContent = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+      const key = el.dataset.i18nPlaceholder;
+      if (dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
     });
     document.getElementById('htmlRoot').setAttribute('lang', lang === 'en' ? 'en' : 'pt-BR');
     document.querySelectorAll('.lang-btn').forEach(function(btn){
@@ -1108,6 +1250,57 @@
         return '<div class="streamer-item"><div class="streamer-avatar" style="background:' + it.color + '">' + it.initials + '</div><span class="streamer-name">' + it.label + '</span></div>';
       }).join('');
       track.innerHTML = html + html;
+    }
+  })();
+
+  // ---- Contact modal ----
+  (function(){
+    const overlay = document.getElementById('contact-modal-overlay');
+    const openBtn = document.getElementById('startProjectBtn');
+    const closeBtn = document.getElementById('cm-close');
+    const tabs = document.querySelectorAll('.cm-tab');
+    const panelEmail = document.getElementById('cm-panel-email');
+    const panelMessage = document.getElementById('cm-panel-message');
+
+    function openModal(){ overlay.classList.add('open'); }
+    function closeModal(){ overlay.classList.remove('open'); }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeModal(); });
+
+    tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        tabs.forEach(function(t){ t.classList.remove('active'); });
+        tab.classList.add('active');
+        const isEmail = tab.dataset.tab === 'email';
+        panelEmail.style.display = isEmail ? 'block' : 'none';
+        panelMessage.style.display = isEmail ? 'none' : 'block';
+      });
+    });
+
+    const copyBtn = document.getElementById('cm-copy-email');
+    if (copyBtn){
+      copyBtn.addEventListener('click', function(){
+        const email = document.getElementById('cm-email-value').textContent;
+        navigator.clipboard.writeText(email).then(function(){
+          const original = copyBtn.textContent;
+          copyBtn.textContent = (document.getElementById('htmlRoot').lang === 'en') ? 'Copied!' : 'Copiado!';
+          setTimeout(function(){ copyBtn.textContent = original; }, 1800);
+        }).catch(function(){});
+      });
+    }
+
+    const sendBtn = document.getElementById('cm-send-message');
+    if (sendBtn){
+      sendBtn.addEventListener('click', function(){
+        const name = document.getElementById('cm-name').value.trim();
+        const msg = document.getElementById('cm-message').value.trim();
+        const subject = encodeURIComponent('New project — ' + (name || 'Portfolio contact'));
+        const body = encodeURIComponent((name ? name + '\n\n' : '') + msg);
+        window.location.href = 'mailto:samsdl06@gmail.com?subject=' + subject + '&body=' + body;
+      });
     }
   })();
 </script>
